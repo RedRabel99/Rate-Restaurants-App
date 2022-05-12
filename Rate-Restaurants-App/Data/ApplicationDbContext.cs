@@ -30,6 +30,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Rate_Restaurants_App.Models.Restaurant>? Restaurant { get; set; }
+
+    public DbSet<Rate_Restaurants_App.Models.Review>? Review { get; set; }
 }
 
 public class RestaurantEntityTypeConfiguration : IEntityTypeConfiguration<Restaurant>

@@ -9,4 +9,9 @@ public class ApplicationUser : IdentityUser
     public string? LastName { get; set; }
     
     public List<Review> Reviews { get; set; }
+
+    public ApplicationUser()
+    {
+        Reviews = new List<Review>();
+    }
 }

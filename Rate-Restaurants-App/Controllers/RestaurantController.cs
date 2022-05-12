@@ -42,6 +42,9 @@ namespace Rate_Restaurants_App.Controllers
                 return NotFound();
             }
 
+            restaurant.Reviews = await _context.Review.Where(x => x.RestaurantId == restaurant.RestaurantId)
+                .Include(e => e.Restaurant).ToListAsync();
+            
             return View(restaurant);
         }
 
@@ -60,7 +63,7 @@ namespace Rate_Restaurants_App.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+                restaurant.Reviews = new List<Review>();
                 _context.Add(restaurant);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
