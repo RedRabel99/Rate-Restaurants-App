@@ -8,7 +8,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -38,10 +38,10 @@
                 @Html.DisplayFor(modelItem => item.Text)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Restaurant.Name)
+                @Html.DisplayFor(modelItem => item.Restaurant!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.Id)
+                @Html.DisplayFor(modelItem => item.Author!.UserName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |

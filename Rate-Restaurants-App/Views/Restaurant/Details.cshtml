@@ -18,6 +18,9 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
     </dl>
+    <p>
+        <a asp-action="AddReview" asp-route-id="@Model.RestaurantId">Add Review</a>
+    </p>
     <dt>
                 @Html.DisplayNameFor(model => model.Reviews)
             </dt>
@@ -26,8 +29,9 @@
                     <tr>
                         <th>Rating</th>
                         <th>Text</th>
+                        <th>User</th>
                     </tr>
-                    @foreach (var item in Model.Reviews)
+                    @foreach (var item in Model.Reviews!)
                     {
                         <tr>
                             <td>
@@ -35,6 +39,14 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Text)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Author!.UserName)
+                            </td>
+                            <td>
+                                <p>
+                                    <a asp-controller="Review" asp-action="Details" asp-route-id="@item.ReviewId">Review details</a>
+                                </p>
                             </td>
                         </tr>
                     }

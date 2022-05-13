@@ -44,9 +44,10 @@ namespace Rate_Restaurants_App.Controllers
                 return NotFound();
             }
 
+           // review.Author = _context.Users.Find(review.AuthorId);
             return View(review);
         }
-
+        /*
         // GET: Review/Create
         public IActionResult Create()
         {
@@ -76,7 +77,7 @@ namespace Rate_Restaurants_App.Controllers
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", review.AuthorId);
             ViewData["RestaurantId"] = new SelectList(_context.Restaurant, "RestaurantId", "Name", review.RestaurantId);
             return View(review);
-        }
+        }               */
 
         // GET: Review/Edit/5
         public async Task<IActionResult> Edit(int? id)

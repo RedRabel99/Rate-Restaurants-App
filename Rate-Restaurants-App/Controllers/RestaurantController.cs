@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -44,7 +45,10 @@ namespace Rate_Restaurants_App.Controllers
 
             restaurant.Reviews = await _context.Review.Where(x => x.RestaurantId == restaurant.RestaurantId)
                 .Include(e => e.Restaurant).ToListAsync();
-            
+            foreach (var review in restaurant.Reviews)
+            {
+                review.Author = _context.Users.Find(review.AuthorId);
+            }
             return View(restaurant);
         }
 
@@ -163,5 +167,56 @@ namespace Rate_Restaurants_App.Controllers
         {
           return (_context.Restaurant?.Any(e => e.RestaurantId == id)).GetValueOrDefault();
         }
+        
+        
+        public IActionResult AddReview()
+        {
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurant, "RestaurantId", "Name");
+            
+            return View(new Review());
+        }
+
+        
+        // POST: Restaurant/AddReview/5
+        [HttpPost, ActionName("AddReview")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(int id, Review review)
+        { /*
+            if (_context.Restaurant == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Restaurant'  is null.");
+            }
+            var restaurant = await _context.Restaurant.FindAsync(id);
+            if (restaurant != null)
+            {
+                _context.Restaurant.Remove(restaurant);
+            }
+            
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index)); */
+            if (_context.Restaurant == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Restaurant'  is null.");
+            }
+            
+            var restaurant = await _context.Restaurant.FindAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (userId == null) return RedirectToAction(nameof(Index));
+            review.Restaurant = restaurant;
+            review.RestaurantId = restaurant.RestaurantId;
+            review.Author = _context.Users.Find(userId);
+            review.AuthorId = userId;
+            
+            _context.Add(review);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", review.AuthorId);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurant, "RestaurantId", "Name", review.RestaurantId);
+            return View(review);
+        }
     }
+    
+    
 }
