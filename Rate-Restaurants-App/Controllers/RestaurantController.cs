@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,11 +25,17 @@ namespace Rate_Restaurants_App.Controllers
         }
 
         // GET: Restaurant
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? TagId)
         {
-            return _context.Restaurant != null
-                ? View(await _context.Restaurant.Include(p => p.Tags).ToListAsync())
-                : Problem("Entity set 'ApplicationDbContext.Restaurant'  is null.");
+            ViewBag.TagId = new SelectList(_context.Tag.OrderBy(c => c.Name).ToList(), "Id", "Name");
+            if (_context.Restaurant == null)  return Problem("Entity set 'ApplicationDbContext.Restaurant'  is null.");
+            var restaurant = await _context.Restaurant.Include(p => p.Tags).ToListAsync();
+            if (TagId.HasValue)
+            {
+                restaurant = restaurant.Where(p => p.Tags.Any(c => c.Id == TagId)).ToList();
+            }
+
+            return View(restaurant);
         }
 
         // GET: Restaurant/Details/5
@@ -58,6 +65,7 @@ namespace Rate_Restaurants_App.Controllers
         }
 
         // GET: Restaurant/Create
+        [Authorize]
         public IActionResult Create()
         {
             List<SelectListItem> selectListItems = _context.Tag.Select(a => new SelectListItem
@@ -75,6 +83,7 @@ namespace Rate_Restaurants_App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("RestaurantId,Name, selectedTags")] Restaurant restaurant, string[] selectedTags)
         {
             if (ModelState.IsValid)
@@ -90,6 +99,7 @@ namespace Rate_Restaurants_App.Controllers
         }
 
         // GET: Restaurant/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Restaurant == null)
@@ -118,6 +128,7 @@ namespace Rate_Restaurants_App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id,
             [Bind("RestaurantId, Name, selectedTags")] Restaurant restaurant, string[] selectedTags)
         {
@@ -187,6 +198,7 @@ namespace Rate_Restaurants_App.Controllers
         }
 
         // GET: Restaurant/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Restaurant == null)
@@ -207,6 +219,7 @@ namespace Rate_Restaurants_App.Controllers
         // POST: Restaurant/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Restaurant == null)
@@ -242,6 +255,7 @@ namespace Rate_Restaurants_App.Controllers
         // POST: Restaurant/AddReview/5
         [HttpPost, ActionName("AddReview")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> AddReview(int id, Review review)
         {
             /*

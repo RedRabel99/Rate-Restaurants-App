@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+        <None Include="wwwroot\Restaurant-Chef-PNG-Clipart.png" />
     </ItemGroup>
 
     <ItemGroup>
