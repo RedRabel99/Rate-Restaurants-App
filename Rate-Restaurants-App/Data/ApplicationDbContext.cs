@@ -32,6 +32,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Rate_Restaurants_App.Models.Restaurant>? Restaurant { get; set; }
 
     public DbSet<Rate_Restaurants_App.Models.Review>? Review { get; set; }
+
+    public DbSet<Rate_Restaurants_App.Models.Tag>? Tag { get; set; }
 }
 
 public class RestaurantEntityTypeConfiguration : IEntityTypeConfiguration<Restaurant>
@@ -40,6 +42,8 @@ public class RestaurantEntityTypeConfiguration : IEntityTypeConfiguration<Restau
     {
         builder.Property(x => x.Name).IsRequired().HasMaxLength(255);
         builder.HasKey(x => x.RestaurantId);
+        builder.HasMany<Tag>(t => t.Tags)
+            .WithMany(r => r.Restaurants);
     }
 }
 
@@ -57,5 +61,13 @@ public class ReviewEntityTypeConfiguration : IEntityTypeConfiguration<Review>
         builder.HasOne(b => b.Author)
             .WithMany(u => u.Reviews).IsRequired(true).OnDelete(DeleteBehavior.Cascade);
 
+    }
+}
+
+public class TagEntityTypeConfiguration : IEntityTypeConfiguration<Tag>
+{
+    public void Configure(EntityTypeBuilder<Tag> builder)
+    {
+        builder.Property(b => b.Name).HasMaxLength(20).IsRequired(true);
     }
 }

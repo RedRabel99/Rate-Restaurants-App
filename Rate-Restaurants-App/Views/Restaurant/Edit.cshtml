@@ -1,3 +1,4 @@
+@using Rate_Restaurants_App.Controllers
 @model Rate_Restaurants_App.Models.Restaurant
 
 @{
@@ -18,6 +19,34 @@
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2"> Tags </label>
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                int i = 0;
+                                List<Rate_Restaurants_App.ViewModels.RestaurantTagViewModel> tags = ViewBag.Tags;
+
+                                foreach (var tag in tags)
+                                {
+                                    if (i++ % 3 == 0)
+                                    {
+                                        @:<tr></tr>
+                                    }
+                                    @:<td>
+                                    <input type="checkbox"
+                                           name="selectedTags"
+                                           value="@tag.TagId"
+                                           @(Html.Raw(tag.Selected ? "checked=\"checked\"" : ""))/>
+                                    @tag.TagName
+                                    @:</td>
+                                }
+                            }
+                        </tr>
+                    </table>
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

@@ -10,10 +10,11 @@ public class Restaurant
     public string Name { get; set; }
 
     public List<Review>? Reviews { get; set; }
-
+    public virtual ICollection<Tag> Tags { get; set; }
     public Restaurant()
     {
         Reviews = new List<Review>();
+        Tags = new HashSet<Tag>();
     }
 
 }
